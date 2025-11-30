@@ -29,6 +29,10 @@
 		20A0A63F2EAABBD600660AD1 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 20A0A63E2EAABBD600660AD1 /* FirebaseRemoteConfig */; };
 		20A0A6412EAABBD600660AD1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 20A0A6402EAABBD600660AD1 /* FirebaseStorage */; };
 		20A0A6432EAABBD600660AD1 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 20A0A6422EAABBD600660AD1 /* FirebaseStorageCombine-Community */; };
+		20A95BE02ED1F3FE0042D919 /* Hub in Frameworks */ = {isa = PBXBuildFile; productRef = 20A95BDF2ED1F3FE0042D919 /* Hub */; };
+		20A95BE22ED1F3FE0042D919 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 20A95BE12ED1F3FE0042D919 /* Tokenizers */; };
+		20A95BE42ED1F3FE0042D919 /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 20A95BE32ED1F3FE0042D919 /* Transformers */; };
+		20A95BE72ED22E760042D919 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 20A95BE62ED22E760042D919 /* WrappingHStack */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,15 +96,19 @@
 			files = (
 				20A0A6432EAABBD600660AD1 /* FirebaseStorageCombine-Community in Frameworks */,
 				20A0A63B2EAABBD600660AD1 /* FirebaseMessaging in Frameworks */,
+				20A95BE42ED1F3FE0042D919 /* Transformers in Frameworks */,
 				20A0A6392EAABBD600660AD1 /* FirebaseMLModelDownloader in Frameworks */,
 				20A0A61F2EAABBD600660AD1 /* FirebaseAnalyticsIdentitySupport in Frameworks */,
 				20A0A61B2EAABBD600660AD1 /* FirebaseAnalytics in Frameworks */,
 				20A0A61D2EAABBD600660AD1 /* FirebaseAnalyticsCore in Frameworks */,
 				20A0A6212EAABBD600660AD1 /* FirebaseAppCheck in Frameworks */,
 				20A0A6192EAABBD600660AD1 /* FirebaseAI in Frameworks */,
+				20A95BE22ED1F3FE0042D919 /* Tokenizers in Frameworks */,
 				20A0A62F2EAABBD600660AD1 /* FirebaseFirestore in Frameworks */,
+				20A95BE02ED1F3FE0042D919 /* Hub in Frameworks */,
 				20A0A6252EAABBD600660AD1 /* FirebaseAuth in Frameworks */,
 				20A0A6332EAABBD600660AD1 /* FirebaseFunctionsCombine-Community in Frameworks */,
+				20A95BE72ED22E760042D919 /* WrappingHStack in Frameworks */,
 				20A0A6232EAABBD600660AD1 /* FirebaseAppDistribution-Beta in Frameworks */,
 				20A0A6412EAABBD600660AD1 /* FirebaseStorage in Frameworks */,
 				20A0A62B2EAABBD600660AD1 /* FirebaseCrashlytics in Frameworks */,
@@ -132,12 +140,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		203D1BDB2ED248F100258487 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		20F38D232E98B42C0074BF7D = {
 			isa = PBXGroup;
 			children = (
 				20F38D2E2E98B42C0074BF7D /* SpiralApp */,
 				20F38D3C2E98B42E0074BF7D /* SpiralAppTests */,
 				20F38D462E98B42E0074BF7D /* SpiralAppUITests */,
+				203D1BDB2ED248F100258487 /* Frameworks */,
 				20F38D2D2E98B42C0074BF7D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -194,6 +210,10 @@
 				20A0A63E2EAABBD600660AD1 /* FirebaseRemoteConfig */,
 				20A0A6402EAABBD600660AD1 /* FirebaseStorage */,
 				20A0A6422EAABBD600660AD1 /* FirebaseStorageCombine-Community */,
+				20A95BDF2ED1F3FE0042D919 /* Hub */,
+				20A95BE12ED1F3FE0042D919 /* Tokenizers */,
+				20A95BE32ED1F3FE0042D919 /* Transformers */,
+				20A95BE62ED22E760042D919 /* WrappingHStack */,
 			);
 			productName = SpiralApp;
 			productReference = 20F38D2C2E98B42C0074BF7D /* SpiralApp.app */;
@@ -279,6 +299,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				20A0A6172EAABBD600660AD1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				20A95BDE2ED1F3FE0042D919 /* XCRemoteSwiftPackageReference "swift-transformers" */,
+				20A95BE52ED22E760042D919 /* XCRemoteSwiftPackageReference "WrappingHStack" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 20F38D2D2E98B42C0074BF7D /* Products */;
@@ -655,6 +677,22 @@
 				minimumVersion = 12.4.0;
 			};
 		};
+		20A95BDE2ED1F3FE0042D919 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.2;
+			};
+		};
+		20A95BE52ED22E760042D919 /* XCRemoteSwiftPackageReference "WrappingHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ksemianov/WrappingHStack";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -767,6 +805,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 20A0A6172EAABBD600660AD1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = "FirebaseStorageCombine-Community";
+		};
+		20A95BDF2ED1F3FE0042D919 /* Hub */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20A95BDE2ED1F3FE0042D919 /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Hub;
+		};
+		20A95BE12ED1F3FE0042D919 /* Tokenizers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20A95BDE2ED1F3FE0042D919 /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Tokenizers;
+		};
+		20A95BE32ED1F3FE0042D919 /* Transformers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20A95BDE2ED1F3FE0042D919 /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Transformers;
+		};
+		20A95BE62ED22E760042D919 /* WrappingHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20A95BE52ED22E760042D919 /* XCRemoteSwiftPackageReference "WrappingHStack" */;
+			productName = WrappingHStack;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

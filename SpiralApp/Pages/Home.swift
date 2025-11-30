@@ -822,4 +822,3 @@ struct DeletePrompt: View {
         Home()
             .environmentObject(AuthModel()) // ✅ Provide AuthModel to avoid crash
     }
-
