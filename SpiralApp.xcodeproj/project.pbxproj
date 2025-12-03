@@ -69,6 +69,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		207D64072EE086B1006EDA24 /* screenshots */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = screenshots;
+			sourceTree = "<group>";
+		};
 		20F38D2E2E98B42C0074BF7D /* SpiralApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -150,6 +155,7 @@
 		20F38D232E98B42C0074BF7D = {
 			isa = PBXGroup;
 			children = (
+				207D64072EE086B1006EDA24 /* screenshots */,
 				20F38D2E2E98B42C0074BF7D /* SpiralApp */,
 				20F38D3C2E98B42E0074BF7D /* SpiralAppTests */,
 				20F38D462E98B42E0074BF7D /* SpiralAppUITests */,
@@ -184,6 +190,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				207D64072EE086B1006EDA24 /* screenshots */,
 				20F38D2E2E98B42C0074BF7D /* SpiralApp */,
 			);
 			name = SpiralApp;
