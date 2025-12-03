@@ -249,6 +249,7 @@ struct ChangeEmail: View {
 
     var body: some View {
         ZStack{
+            Color.secondary .ignoresSafeArea()
             VStack(spacing: 12) {
                
                 SuccessBanner(message: bannerText, isShown: $bannerShown)
@@ -354,6 +355,8 @@ struct ChangePassword: View {
 
     var body: some View {
         ZStack{
+            Color.secondary .ignoresSafeArea()
+
             VStack(spacing: 12) {
                 
                 SuccessBanner(message: bannerText, isShown: $bannerShown)
