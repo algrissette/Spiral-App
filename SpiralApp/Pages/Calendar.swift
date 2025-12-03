@@ -10,8 +10,7 @@ import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
-
-
+// MARK: - Show Mini Journal
 struct ShowMiniJournal: View {
     @Binding var showMiniJournal: [(String, Int, Int)]
     @EnvironmentObject var checkAuth: AuthModel
@@ -19,14 +18,16 @@ struct ShowMiniJournal: View {
     @State private var isLoading = true
     @State private var listener: ListenerRegistration?
 
-    // MARK: - Extract current tuple safely
     private var currentTuple: (day: String, month: Int, year: Int)? {
         showMiniJournal.first
     }
 
-    // MARK: - Convert tuple to Date
     private var date: Date? {
-        guard let tuple = currentTuple, let dayInt = Int(tuple.day), tuple.month >= 1, tuple.month <= 12 else { return nil }
+        guard let tuple = currentTuple,
+              let dayInt = Int(tuple.day),
+              tuple.month >= 1,
+              tuple.month <= 12 else { return nil }
+        
         var components = DateComponents()
         components.day = dayInt
         components.month = tuple.month
@@ -34,14 +35,14 @@ struct ShowMiniJournal: View {
         return Calendar.current.date(from: components)
     }
 
-
     private var monthName: String {
-        guard let month = currentTuple?.month, month >= 1, month <= 12 else { return "" }
+        guard let month = currentTuple?.month,
+              month >= 1,
+              month <= 12 else { return "" }
         return Calendar.current.monthSymbols[month - 1]
     }
 
-    // MARK: - Firestore listening
-    func listenForTasks() {
+    private func listenForTasks() {
         guard let userID = checkAuth.currentUser?.id else {
             print("⚠️ User not logged in")
             isLoading = false
@@ -73,12 +74,11 @@ struct ShowMiniJournal: View {
             }
     }
 
-    func stopListening() {
+    private func stopListening() {
         listener?.remove()
         listener = nil
     }
 
-    // MARK: - View Body
     var body: some View {
         if let tuple = currentTuple {
             ZStack {
@@ -105,46 +105,53 @@ struct ShowMiniJournal: View {
                             .multilineTextAlignment(.center)
                             .padding()
                     } else {
-                        VStack(alignment: .leading, spacing: 6) {
-                            ForEach(tasks, id: \.self) { task in
-                                HStack {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.green)
-                                    Text(task)
-                                        .font(.custom("AlegreyaSansSC-regular", size: 14))
-                                        .foregroundColor(.black)
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 6) {
+                                ForEach(tasks, id: \.self) { task in
+                                    HStack {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundColor(.green)
+                                        Text(task)
+                                            .font(.custom("AlegreyaSansSC-regular", size: 14))
+                                            .foregroundColor(.black)
+                                    }
                                 }
                             }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
                     }
 
                     Spacer()
 
                     HStack(spacing: 12) {
-                        // Close button
                         Button(action: { showMiniJournal = [] }) {
-                            Text("X")
-                                .font(.headline)
+                            Text("Close")
+                                .font(.custom("AlegreyaSansSC-Bold", size: 14))
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.red.cornerRadius(10))
+                                .background(Color.red)
                                 .foregroundColor(.white)
+                                .cornerRadius(10)
                         }
 
-                        // Open Full Journal using your NavLink
-                        NavLink(
-                            destination: Home(currentDate: date ?? Date()),
-                            image: Image(systemName: "book"),
-                            text: "Open Full Journal"
-                        )
-                        .frame(maxWidth: .infinity)
-                        .cornerRadius(10)
+                        NavigationLink(destination: Home(currentDate: date ?? Date())) {
+                            HStack {
+                                Image(systemName: "book")
+                                    .font(.system(size: 14))
+                                Text("Open Journal")
+                                    .font(.custom("AlegreyaSansSC-Bold", size: 14))
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.primary)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                        }
                     }
                     .padding(.horizontal)
                     .padding(.bottom)
                 }
-                .frame(width: 300, height: 280)
+                .frame(width: 320, height: 350)
                 .background(Color.secondary)
                 .cornerRadius(20)
                 .shadow(radius: 10)
@@ -155,24 +162,22 @@ struct ShowMiniJournal: View {
     }
 }
 
-
 // MARK: - CalendarPage View
-
 struct CalendarPage: View {
     @State private var showSideBar = false
-    @State private var selectedMonth  = Calendar.current.component(.month, from: Date())
+    @State private var selectedMonth = Calendar.current.component(.month, from: Date())
     @State private var selectedYear = Calendar.current.component(.year, from: Date())
     @State private var isUpdatingMonthYear = false
     @State private var showMiniJournal: [(String, Int, Int)] = []
-    @State var showClearTaskMenu : Bool = false
-
+    @State private var showClearTaskMenu: Bool = false
+    @State private var refreshTrigger: Bool = false
     
-    func setMonthsBefore(_ currentMonth: Int, _ currentYear: Int) -> [(Int, Int)] {
+    private func setMonthsBefore(_ currentMonth: Int, _ currentYear: Int) -> [(Int, Int)] {
         var monthsArray: [(Int, Int)] = []
         var month = currentMonth
         var year = currentYear
 
-        for _ in 1...12 { // 12 months before
+        for _ in 1...12 {
             month -= 1
             if month < 1 { month = 12; year -= 1 }
             monthsArray.append((month, year))
@@ -180,12 +185,12 @@ struct CalendarPage: View {
         return monthsArray.reversed()
     }
 
-    func setMonthsAfter(_ currentMonth: Int, _ currentYear: Int) -> [(Int, Int)] {
+    private func setMonthsAfter(_ currentMonth: Int, _ currentYear: Int) -> [(Int, Int)] {
         var monthsArray: [(Int, Int)] = []
         var month = currentMonth
         var year = currentYear
 
-        for _ in 1...12 { // 12 months after
+        for _ in 1...12 {
             month += 1
             if month > 12 { month = 1; year += 1 }
             monthsArray.append((month, year))
@@ -193,30 +198,50 @@ struct CalendarPage: View {
         return monthsArray
     }
 
-    private var monthsBefore: [(Int, Int)] { setMonthsBefore(selectedMonth, selectedYear) }
-    private var monthsAfter: [(Int, Int)] { setMonthsAfter(selectedMonth, selectedYear) }
+    private var monthsBefore: [(Int, Int)] {
+        setMonthsBefore(selectedMonth, selectedYear)
+    }
+    
+    private var monthsAfter: [(Int, Int)] {
+        setMonthsAfter(selectedMonth, selectedYear)
+    }
     
     private let months = Calendar.current.monthSymbols
     private let years = Array(1900...2100)
     
+    private func changeMonth(by value: Int) {
+        var newMonth = selectedMonth + value
+        var newYear = selectedYear
+        
+        while newMonth > 12 { newMonth -= 12; newYear += 1 }
+        while newMonth < 1 { newMonth += 12; newYear -= 1 }
+        
+        selectedMonth = newMonth
+        selectedYear = newYear
+    }
+    
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 0) {
-                VStack {
-                    Navbar(showSidebar: $showSideBar, headerText: "Calendar")
-                }
+                Navbar(
+                    showSidebar: $showSideBar,
+                    refreshTrigger: $refreshTrigger,
+                    headerText: "Calendar"
+                    
+                )
                 .background(Color.secondary)
                 
-                VStack (spacing:0){
-                    VStack (spacing: 0){
+                VStack(spacing: 0) {
+                    VStack(spacing: 0) {
                         HStack(spacing: 12) {
                             Button(action: { changeMonth(by: -1) }) {
                                 Image(systemName: "chevron.left")
-                                    .font(.system(size:16))
+                                    .font(.system(size: 16))
                                     .foregroundColor(.white)
                                     .padding(6)
                                     .clipShape(Circle())
                             }
+                            
                             Spacer()
                             
                             Picker("Month", selection: $selectedMonth) {
@@ -245,7 +270,7 @@ struct CalendarPage: View {
                             
                             Button(action: { changeMonth(by: 1) }) {
                                 Image(systemName: "chevron.right")
-                                    .font(.system(size:16))
+                                    .font(.system(size: 16))
                                     .foregroundColor(.white)
                                     .padding(6)
                                     .clipShape(Circle())
@@ -253,10 +278,9 @@ struct CalendarPage: View {
                         }
                         .padding()
                         .background(Color.white.opacity(0.1))
-
-                        
                     }
                     .background(Color.secondary)
+                    
                     CalendarHeader()
                     
                     ScrollViewReader { proxy in
@@ -265,7 +289,7 @@ struct CalendarPage: View {
                                 GeometryReader { geo in
                                     let minY = geo.frame(in: .global).minY
                                     Color.clear
-                                        .onChange(of: minY) {
+                                        .onChange(of: minY) { _ in
                                             if !isUpdatingMonthYear && minY > 150 {
                                                 isUpdatingMonthYear = true
                                                 changeMonth(by: -12)
@@ -280,25 +304,37 @@ struct CalendarPage: View {
                                 ForEach(monthsBefore.indices, id: \.self) { index in
                                     let (month, year) = monthsBefore[index]
                                     MonthHeader(monthNumber: month)
-                                    MonthView(month: month, year: year, showMiniJournal: $showMiniJournal)
+                                    MonthView(
+                                        month: month,
+                                        year: year,
+                                        showMiniJournal: $showMiniJournal
+                                    )
                                 }
                                 
                                 MonthHeader(monthNumber: selectedMonth)
                                 
-                                MonthView(month: selectedMonth, year: selectedYear, showMiniJournal: $showMiniJournal)
-                                    .id("myMonth")
+                                MonthView(
+                                    month: selectedMonth,
+                                    year: selectedYear,
+                                    showMiniJournal: $showMiniJournal
+                                )
+                                .id("myMonth")
                                 
                                 ForEach(monthsAfter.indices, id: \.self) { index in
                                     let (month, year) = monthsAfter[index]
                                     MonthHeader(monthNumber: month)
-                                    MonthView(month: month, year: year, showMiniJournal: $showMiniJournal)
+                                    MonthView(
+                                        month: month,
+                                        year: year,
+                                        showMiniJournal: $showMiniJournal
+                                    )
                                 }
                                 
                                 GeometryReader { geo in
                                     let maxY = geo.frame(in: .global).maxY
                                     let screenHeight = UIScreen.main.bounds.height
                                     Color.clear
-                                        .onChange(of: maxY) {
+                                        .onChange(of: maxY) { _ in
                                             if !isUpdatingMonthYear && maxY < screenHeight + 150 {
                                                 isUpdatingMonthYear = true
                                                 changeMonth(by: 12)
@@ -313,13 +349,26 @@ struct CalendarPage: View {
                                 Spacer()
                             }
                             .onAppear {
-                                DispatchQueue.main.async { proxy.scrollTo("myMonth", anchor: .center) }
+                                DispatchQueue.main.async {
+                                    proxy.scrollTo("myMonth", anchor: .center)
+                                }
                             }
-                            .onChange(of: selectedMonth) {
-                                DispatchQueue.main.async { proxy.scrollTo("myMonth", anchor: .center) }
+                            .onChange(of: selectedMonth) { _ in
+                                DispatchQueue.main.async {
+                                    proxy.scrollTo("myMonth", anchor: .center)
+                                }
                             }
-                            .onChange(of: selectedYear) {
-                                DispatchQueue.main.async { proxy.scrollTo("myMonth", anchor: .center) }
+                            .onChange(of: selectedYear) { _ in
+                                DispatchQueue.main.async {
+                                    proxy.scrollTo("myMonth", anchor: .center)
+                                }
+                            }
+                            .onChange(of: refreshTrigger) { _ in
+                                // Scroll back to current month when refresh is triggered
+                                let today = Date()
+                                let calendar = Calendar.current
+                                selectedMonth = calendar.component(.month, from: today)
+                                selectedYear = calendar.component(.year, from: today)
                             }
                         }
                     }
@@ -356,27 +405,68 @@ struct CalendarPage: View {
                 ShowMiniJournal(showMiniJournal: $showMiniJournal)
             }
             
-            SideBar(showSideBar: $showSideBar, showClearTaskMenu: $showClearTaskMenu)
-                .transition(.move(edge: .leading))
-                .animation(.easeInOut, value: showSideBar)
+            Home.SideBar(
+                showSideBar: $showSideBar,
+                showClearTaskMenu: $showClearTaskMenu
+            )
+            .transition(.move(edge: .leading))
+            .animation(.easeInOut, value: showSideBar)
         }
         .navigationBarBackButtonHidden(true)
     }
-    
-    func changeMonth(by value: Int) {
-        var newMonth = selectedMonth + value
-        var newYear = selectedYear
+}
+
+// MARK: - Navbar
+extension CalendarPage {
+    struct Navbar: View {
+        @Binding var showSidebar: Bool
+        @Binding var refreshTrigger: Bool
+        var headerText: String
         
-        while newMonth > 12 { newMonth -= 12; newYear += 1 }
-        while newMonth < 1 { newMonth += 12; newYear -= 1 }
-        
-        selectedMonth = newMonth
-        selectedYear = newYear
+        var body: some View {
+            VStack(spacing: 0) {
+                HStack {
+                    Button(action: { showSidebar.toggle() }) {
+                        Image(systemName: "chevron.forward")
+                            .font(.system(size: 16))
+                            .padding()
+                            .foregroundColor(.black)
+                    }
+                    
+                    Spacer()
+                    
+                    Text(headerText)
+                        .font(.custom("AlegreyaSansSC-Bold", size: 20))
+                        .lineLimit(1)
+                        .tracking(5)
+                        .foregroundColor(.black)
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        refreshTrigger.toggle()
+                    }) {
+                        Image("SpiralLogo")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                
+                Path { path in
+                    path.move(to: CGPoint(x: 0, y: 0))
+                    path.addLine(to: CGPoint(x: 500, y: 0))
+                }
+                .stroke(Color.black, lineWidth: 1)
+                .shadow(color: Color.black, radius: 3, y: 3)
+                .frame(maxHeight: 4)
+            }
+        }
     }
 }
 
-// MARK: - MonthHeader View
-
+// MARK: - MonthHeader
 struct MonthHeader: View {
     var monthNumber: Int
     private let months = Calendar.current.monthSymbols
@@ -384,18 +474,14 @@ struct MonthHeader: View {
     var body: some View {
         Text(months[monthNumber - 1])
             .font(.custom("sippinOnSunshine", size: 35))
-            .foregroundStyle(
-                .white
-                )
-            
+            .foregroundStyle(.white)
             .shadow(color: .black.opacity(0.2), radius: 3, x: 1, y: 1)
             .padding(.vertical, 8)
             .frame(maxWidth: .infinity)
     }
 }
 
-// MARK: - CalendarHeader View
-
+// MARK: - CalendarHeader
 struct CalendarHeader: View {
     private let days = ["S", "M", "T", "W", "T", "F", "S"]
     
@@ -413,8 +499,7 @@ struct CalendarHeader: View {
     }
 }
 
-// MARK: - MonthView View
-
+// MARK: - MonthView
 struct MonthView: View {
     var month: Int
     var year: Int
@@ -476,13 +561,13 @@ struct MonthView: View {
     }
 }
 
+// MARK: - CalendarCell Enum
 enum CalendarCell {
     case empty
     case day(Int)
 }
 
-// MARK: - CalendarCellView View
-
+// MARK: - CalendarCellView
 struct CalendarCellView: View {
     var emoji: String
     var date: String
@@ -514,7 +599,11 @@ struct CalendarCellView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(
                             isToday
-                            ? AnyShapeStyle(LinearGradient(colors: [Color.blue, Color.purple], startPoint: .topLeading, endPoint: .bottomTrailing))
+                            ? AnyShapeStyle(LinearGradient(
+                                colors: [Color.blue, Color.purple],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ))
                             : AnyShapeStyle(Color.white)
                         )
                     
@@ -529,7 +618,8 @@ struct CalendarCellView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     CalendarPage()
-        .environmentObject(AuthModel()) // provide dummy auth
+        .environmentObject(AuthModel())
 }
