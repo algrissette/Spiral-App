@@ -21,9 +21,8 @@ Built for people who want a more mindful, expressive, and consistent journaling 
 
 ## 🖼️ Screenshots
 
-> Add screenshots or GIFs here  
-> Example:
-```md
 ![Enter](./screenshots/EnterApp.png)
-![Home1](./screenshots/Home1.png)
-![Home2](./screenshots/Home2.png)
+
+![Home 1](./screenshots/Home1.png)
+
+![Home 2](./screenshots/Home2.png)
