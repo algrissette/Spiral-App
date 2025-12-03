@@ -21,8 +21,8 @@ Built for people who want a more mindful, expressive, and consistent journaling 
 
 ## 🖼️ Screenshots
 
-![Enter](./screenshots/EnterApp.png)
+![Enter](./screenshots/EnterApp.PNG)
 
-![Home 1](./screenshots/Home1.png)
+![Home 1](./screenshots/Home1.PNG)
 
-![Home 2](./screenshots/Home2.png)
+![Home 2](./screenshots/Home2.PNG)
