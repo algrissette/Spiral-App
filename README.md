@@ -73,8 +73,7 @@ struct APIKeys {
 
 ## 🎥 Video Walkthrough
 
-(Coming soon)
-
+[![Watch the video](https://img.youtube.com/vi/xG12VoMWYuw/0.jpg)](https://youtu.be/xG12VoMWYuw)
 ---
 
 ## 👤 Created & Designed By
