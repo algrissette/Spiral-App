@@ -10,6 +10,7 @@ import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 
+@MainActor
 class AuthModel: ObservableObject {
     
     @Published var userSession: FirebaseAuth.User?
@@ -19,10 +20,11 @@ class AuthModel: ObservableObject {
     private let db = Firestore.firestore()
     
     init() {
-        Task {
+        Task { @MainActor in
             await fetchUser()
         }
     }
+
 
     // MARK: - Fetch Current User
     func fetchUser() async {
@@ -49,7 +51,7 @@ class AuthModel: ObservableObject {
     func createAccount(email: String, password: String, name: String, username: String) async throws {
         do {
             let authResult = try await authenticator.createUser(withEmail: email, password: password)
-            self.userSession = authResult.user
+             self.userSession = authResult.user
             
             let user = AppUser(
                 id: authResult.user.uid,
@@ -62,7 +64,7 @@ class AuthModel: ObservableObject {
             
             do {
                 try await db.collection("users").document(user.id).setData(encodedUser)
-                self.currentUser = user
+                 self.currentUser = user
             } catch {
                 // Firestore save failed, so delete the user in Auth to rollback
                 do {
@@ -124,7 +126,7 @@ class AuthModel: ObservableObject {
                 // Treat as username — look up the email in Firestore
                 let query = try await Firestore.firestore()
                     .collection("users")
-                    .whereField("username", isEqualTo: identifier)
+                    .whereField("userName", isEqualTo: identifier)
                     .getDocuments()
 
                 guard let document = query.documents.first else {
@@ -136,7 +138,7 @@ class AuthModel: ObservableObject {
 
             // Sign in with the resolved email
             let result = try await Auth.auth().signIn(withEmail: emailToUse, password: password)
-            self.userSession = result.user
+          self.userSession = result.user
             await fetchUser()
 
         } catch {

@@ -50,7 +50,7 @@ struct ChangeUsername: View {
 
         var body: some View {
             ZStack {
-                Color.primary.ignoresSafeArea()
+                Color.secondary.ignoresSafeArea()
 
                 VStack(spacing: 16) {
 
@@ -75,10 +75,11 @@ struct ChangeUsername: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Current Username")
                                 .font(.custom("AlegreyaSansSC-regular", size: 16))
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.black)
 
                             Text(currentUser.userName)
                                 .font(.custom("AlegreyaSansSC-regular", size: 16))
+                                .foregroundStyle(.black)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
@@ -155,7 +156,7 @@ struct ChangeName: View {
 
     var body: some View {
         ZStack{
-            Color.primary.ignoresSafeArea()
+            Color.secondary.ignoresSafeArea()
             VStack(spacing: 16) {
                
                 SuccessBanner(message: bannerText, isShown: $bannerShown)
@@ -177,9 +178,10 @@ struct ChangeName: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Current Name")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.black)
                         Text(current.fullname)
-                            .font(.headline)
+                            .font(.custom("AlegreyaSansSC-Bold", size: 16))                            .foregroundStyle(.black)
+
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -270,10 +272,11 @@ struct ChangeEmail: View {
                 if let current = user.currentUser {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Current Email")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                            .font(.custom("AlegreyaSansSC-regular", size: 16))
+                            .foregroundStyle(.black)
                         Text(current.email)
-                            .font(.headline)
+                            .font(.custom("AlegreyaSansSC-regular", size: 20))
+                            .foregroundStyle(.black)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -1154,56 +1157,59 @@ struct LogoutScreen: View {
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
-        VStack(spacing: 16) {
-            HStack {
-                NavigationLink(destination: Settings()){
-                    Image(systemName: "x.square")
-                        .foregroundColor(.black)
-                        .font(.system(size: 30))
-                        .padding()
+        ZStack{
+            Color.secondary.ignoresSafeArea()
+            VStack(spacing: 16) {
+                HStack {
+                    NavigationLink(destination: Settings()){
+                        Image(systemName: "x.square")
+                            .foregroundColor(.black)
+                            .font(.system(size: 30))
+                            .padding()
+                    }
+                    Spacer()
                 }
+                
+                SuccessBanner(message: bannerText, isShown: $bannerShown)
+                    .animation(.easeInOut(duration: 0.25), value: bannerShown)
+                
+                Text("Are you sure you want to log out?")
+                    .font(.custom("AlegreyaSansSC-Regular", size: 14))
+                    .foregroundColor(.black)                    .padding(.horizontal)
+                
+                if loading {
+                    ProgressView().padding()
+                } else {
+                    HStack(spacing: 12) {
+                        Button(action: { presentationMode.wrappedValue.dismiss() }) {
+                            Text("Cancel")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.primary)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        
+                        Button(action: { doSignOut() }) {
+                            Text("Log Out")
+                                .bold()
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.primary)
+                                .foregroundColor(.black)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+                
                 Spacer()
             }
-            
-            SuccessBanner(message: bannerText, isShown: $bannerShown)
-                .animation(.easeInOut(duration: 0.25), value: bannerShown)
-
-            Text("Are you sure you want to log out?")
-                .font(.headline)
-                .padding(.horizontal)
-
-            if loading {
-                ProgressView().padding()
-            } else {
-                HStack(spacing: 12) {
-                    Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                        Text("Cancel")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color(.systemGray5))
-                            .foregroundColor(.primary)
-                            .cornerRadius(10)
-                    }
-
-                    Button(action: { doSignOut() }) {
-                        Text("Log Out")
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.secondary)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                }
-                .padding(.horizontal)
+            .navigationTitle("Log Out")
+            .navigationBarBackButtonHidden(true)
+            .alert(item: $alertMessage) { msg in
+                Alert(title: Text("Error"), message: Text(msg), dismissButton: .default(Text("OK")))
             }
-
-            Spacer()
-        }
-        .navigationTitle("Log Out")
-        .navigationBarBackButtonHidden(true)
-        .alert(item: $alertMessage) { msg in
-            Alert(title: Text("Error"), message: Text(msg), dismissButton: .default(Text("OK")))
         }
     }
 

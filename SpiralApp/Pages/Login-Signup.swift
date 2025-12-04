@@ -25,7 +25,6 @@ struct Login: View {
                             Image(systemName: "x.square")
                                 .foregroundColor(.black)
                                 .font(.system(size: 30))
-                                .padding()
                         }
                         Spacer()
                     }
