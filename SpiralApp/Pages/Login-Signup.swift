@@ -101,9 +101,23 @@ struct Login: View {
                                     password: userPassword
                                 )
                             } catch {
-                                loginError = "Account already exists"
-                                print( "Firebase error: \(error.localizedDescription)")
-                            }
+                                if let authError = error as? AuthModel.AuthError{
+                                    
+                                    switch authError {
+                                    case .usernameNotFound:
+                                        loginError = "Username doesn't exist"
+                                        
+                                    case .incorrectPassword:
+                                        loginError = "Password is incorrect"
+                                        
+                                    }
+                                } else {
+                                        loginError = "Try again later. Server is down"
+                                        print( "Firebase error: \(error.localizedDescription)")
+                                    }
+                                }
+                            
+                            
 
                             // Stop loading after login attempt
                             isLoading = false
